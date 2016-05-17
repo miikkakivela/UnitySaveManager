@@ -7,12 +7,12 @@ namespace SaveManager
     /// associated with it.
     /// </summary>
     [Serializable]
-    public class SavedGame
+    public class SavedGame<T>
     {
         public SavedGameMetadata metadata;
-        public object gameSpecificData;
+        public T gameSpecificData;
 
-        public SavedGame(SavedGameMetadata metadata, object gameSpecificData)
+        public SavedGame(SavedGameMetadata metadata, T gameSpecificData)
         {
             this.metadata = metadata;
             this.gameSpecificData = gameSpecificData;

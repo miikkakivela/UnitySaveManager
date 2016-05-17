@@ -70,7 +70,7 @@ namespace SaveManager.Example
             var savedGameFileName = "SavedGame" + largestSlot;
 
             // Creates a new SavedGame object.
-            var savedGame = new SavedGame(
+            var savedGame = new SavedGame<SaveData>(
                 new SavedGameMetadata(savedGameFileName, largestSlot),
                 new SaveData()
             );
@@ -143,18 +143,18 @@ namespace SaveManager.Example
             canvasGroup.interactable = false;
 
             // Loads up the game data when save element on the scroll view is selected.
-            SaveManager.LoadSavedGame(metadata, (SavedGame savedGame) =>
+            SaveManager.LoadSavedGame<SaveData>(metadata, (SavedGame<SaveData> savedGame) =>
             {
                 statusText.text = "Save data loaded!";
 
-                var saveData = (SaveData)savedGame.gameSpecificData;
+                SaveData gameSpecificData = savedGame.gameSpecificData;
 
                 // Log some dummy data from the loaded game data.
-                Debug.Log("Character name: " + saveData.characterName);
-                Debug.Log("Has that upgrade: " + saveData.upgrades.hasThatUpgrade);
+                Debug.Log("Character name: " + gameSpecificData.characterName);
+                Debug.Log("Has that upgrade: " + gameSpecificData.upgrades.hasThatUpgrade);
                 Debug.Log("Inventory:");
 
-                foreach (var item in saveData.inventory)
+                foreach (string item in gameSpecificData.inventory)
                 {
                     Debug.Log(item);
                 }

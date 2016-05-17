@@ -128,9 +128,9 @@ namespace SaveManager
         /// <param name="metadata">Metadata for the saved game.</param>
         /// <param name="gameData">Game specific data that is to be saved.</param>
         /// <param name="callback">Callback which is called when the saving has finished.</param>
-        public static void SaveGame(SavedGameMetadata metadata, object gameData, Action callback)
+        public static void SaveGame<T>(SavedGameMetadata metadata, T gameData, Action callback)
         {
-            SaveGame(new SavedGame(metadata, gameData), callback);
+            SaveGame(new SavedGame<T>(metadata, gameData), callback);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace SaveManager
         /// <param name="savedGame">Combination of metadata and game specific data
         /// that is to be saved.</param>
         /// <param name="callback">Callback which is called when the saving has finished.</param>
-        public static void SaveGame(SavedGame savedGame, Action callback)
+        public static void SaveGame<T>(SavedGame<T> savedGame, Action callback)
         {
             if (savedGame.metadata == null)
             {
@@ -250,7 +250,7 @@ namespace SaveManager
             }
         }
 
-        private static void SaveGameAsync(SavedGame savedGame, string gameDataPath, string metadataPath,
+        private static void SaveGameAsync<T>(SavedGame<T> savedGame, string gameDataPath, string metadataPath,
             Action callback)
         {
             if (backgroundWorker == null)
@@ -341,7 +341,7 @@ namespace SaveManager
         /// </summary>
         /// <param name="metadata">Metadata that is associated with the game data.</param>
         /// <param name="callback">Callback which is called when the loading is done.</param>
-        public static void LoadSavedGame(SavedGameMetadata metadata, Action<SavedGame> callback)
+        public static void LoadSavedGame<T>(SavedGameMetadata metadata, Action<SavedGame<T>> callback)
         {
             if (callback == null)
             {
@@ -357,16 +357,16 @@ namespace SaveManager
 
             if (Async)
             {
-                ReadFileAsync<object>(gameDataPath, (object gameSpecificData) =>
+                ReadFileAsync<T>(gameDataPath, (T gameSpecificData) =>
                 {
-                    var savedGame = new SavedGame(metadata, gameSpecificData);
+                    SavedGame<T> savedGame = new SavedGame<T>(metadata, (T)gameSpecificData);
                     callback(savedGame);
                 });
             }
             else
             {
-                var gameSpecificData = ReadAndDeserialize<object>(gameDataPath);
-                callback(new SavedGame(metadata, gameSpecificData));
+                T gameSpecificData = ReadAndDeserialize<T>(gameDataPath);
+                callback(new SavedGame<T>(metadata, (T)gameSpecificData));
             }
         }
 
@@ -566,7 +566,7 @@ namespace SaveManager
         /// <param name="savedGame">Combination of metadata and game specific data
         /// that is to be saved.</param>
         /// <param name="callback">Callback which is called when the deleting is done.</param>
-        public static void DeleteSave(SavedGame savedGame, Action callback)
+        public static void DeleteSave<T>(SavedGame<T> savedGame, Action callback)
         {
             DeleteSave(savedGame.metadata, callback);
         }
