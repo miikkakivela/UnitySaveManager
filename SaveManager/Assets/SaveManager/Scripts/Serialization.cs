@@ -2,12 +2,14 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 namespace SaveManager
 {
     public enum SerializationFormat
     {
-        Binary
+        Binary,
+        Json
     }
 
     /// <summary>
@@ -44,7 +46,23 @@ namespace SaveManager
 
         public static string SerializeToJson(object obj)
         {
-            throw new NotImplementedException();
+            if (obj == null)
+            {
+                throw new ArgumentException("Object can't be null.", "obj");
+            }
+
+            if (!obj.GetType().IsSerializable)
+            {
+                throw new SerializationException(
+                    string.Format(
+                        "Type '{0}' is not serializable! " +
+                            "Check that the type are marked with [Serializable] attribute."
+                        , obj.GetType()
+                    )
+                );
+            }
+
+            return JsonUtility.ToJson(obj);
         }
 
         public static T DeserializeFromBytes<T>(byte[] data)
@@ -75,7 +93,15 @@ namespace SaveManager
 
         public static T DeserializeFromJson<T>(string json)
         {
-            throw new NotImplementedException();
+            if(string.IsNullOrEmpty(json))
+            {
+                throw new ArgumentException(
+                    "Json string can't be empty or null.",
+                    "json"
+                );
+            }
+
+            return JsonUtility.FromJson<T>(json);
         }
     }
 }

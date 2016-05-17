@@ -297,6 +297,11 @@ namespace SaveManager
                     File.WriteAllBytes(path, binarySerializedData);
 
                     break;
+                case SerializationFormat.Json:
+                    var jsonSerializedData = Serialization.SerializeToJson(data);
+                    File.WriteAllText(path, jsonSerializedData);
+
+                    break;
             }
         }
         #endregion
@@ -509,6 +514,9 @@ namespace SaveManager
                 default:
                     var binarySerializedData = File.ReadAllBytes(path);
                     return Serialization.DeserializeFromBytes<T>(binarySerializedData);
+                case SerializationFormat.Json:
+                    var jsonSerializedData = File.ReadAllText(path);
+                    return Serialization.DeserializeFromJson<T>(jsonSerializedData);
             }
         }
 
@@ -528,6 +536,15 @@ namespace SaveManager
                             var data = File.ReadAllBytes(filePath);
                             var deserializedBinaryData = Serialization.DeserializeFromBytes<T>(data);
                             files.Add(deserializedBinaryData);
+                        }
+
+                        break;
+                    case SerializationFormat.Json:
+                        foreach(var filePath in filePaths)
+                        {
+                            var data = File.ReadAllText(filePath);
+                            var deserializedJsonData = Serialization.DeserializeFromJson<T>(data);
+                            files.Add(deserializedJsonData);
                         }
 
                         break;
